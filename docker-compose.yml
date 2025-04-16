@@ -1,0 +1,16 @@
+version: "3.9"
+
+services:
+  redaccion:
+    platform: linux/x86_64
+    build: .
+    image: threads:dev
+    container_name: threads-container
+    volumes:
+      - .:/app
+    ports:
+      - 8590:8590
+    restart: always
+    env_file:
+      - ${HOME}/environments/threads-env/.env
+    command: ["/app/main"]
