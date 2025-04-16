@@ -1,8 +1,11 @@
 package usecase
 
 import (
+	"fmt"
+	"strings"
 	"threads/src/domain"
 	"threads/src/infraestructure/middleware"
+	"threads/src/shared"
 	"threads/src/view/dto"
 )
 
@@ -16,8 +19,7 @@ func NewRegistrarUsuarioUseCase(userRepo domain.UserRepository) *RegistrarUsuari
 	}
 }
 
-func (uc *RegistrarUsuarioUseCase) Execute(username, name, email, password string) dto.ResponseThreads {
-
+func (uc *RegistrarUsuarioUseCase) Execute(name, email, password string) dto.ResponseThreads {
 	user, err := uc.userRepo.FindByEmail(email)
 	if err != nil {
 		return *dto.NewResponseThreads(500, err.Error(), nil)
@@ -27,16 +29,12 @@ func (uc *RegistrarUsuarioUseCase) Execute(username, name, email, password strin
 		return *dto.NewResponseThreads(409, "Existe un usuario registrado con este email", nil)
 	}
 
-	user, err = uc.userRepo.FindByUsername(username)
+	username, err := shared.GenerarUsernameDisponibleDesdeRepositorio(name, uc.userRepo)
 	if err != nil {
-		return *dto.NewResponseThreads(500, err.Error(), nil)
+		return *dto.NewResponseThreads(500, "No se pudo generar un username disponible", nil)
 	}
 
-	if user.Exists() {
-		return *dto.NewResponseThreads(409, "Existe un usuario registrado con este username", nil)
-	}
-
-	hassPassword, err := middleware.HashPassword(password)
+	hashedPassword, err := middleware.HashPassword(password)
 	if err != nil {
 		return *dto.NewResponseThreads(500, "Ha ocurrido un error con la contraseña", nil)
 	}
@@ -44,11 +42,14 @@ func (uc *RegistrarUsuarioUseCase) Execute(username, name, email, password strin
 	user.SetEmail(email)
 	user.SetUsername(username)
 	user.SetName(name)
-	user.SetPassword(hassPassword)
+	user.SetPassword(hashedPassword)
 
-	err = user.Save()
-	if err != nil {
-		return *dto.NewResponseThreads(500, "Ha ocurrido un error en el sistema durante la creación del usuario", nil)
+	if strings.TrimSpace(user.GetPhone()) == "" {
+		user.SetPhone("")
+	}
+
+	if err := user.Save(); err != nil {
+		return *dto.NewResponseThreads(500, fmt.Sprintf("Error al guardar: %v", err), nil)
 	}
 
 	return *dto.NewResponseThreads(201, "Usuario registrado exitosamente.", user.ToDTO())

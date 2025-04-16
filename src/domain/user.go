@@ -1,6 +1,8 @@
 package domain
 
-import "threads/src/view/dto"
+import (
+	"threads/src/view/dto"
+)
 
 type User struct {
 	id           int64
@@ -9,6 +11,8 @@ type User struct {
 	email        string
 	phone        string
 	password     string
+	avatar       string
+	description  string
 	sessionToken string
 	repository   UserRepository
 }
@@ -31,6 +35,14 @@ func (u *User) SetName(name string) {
 
 func (u *User) GetName() string {
 	return u.name
+}
+
+func (u *User) SetAvatar(avatar string) {
+	u.avatar = avatar
+}
+
+func (u *User) SetDescription(description string) {
+	u.description = description
 }
 
 func (u *User) SetEmail(email string) {
@@ -59,6 +71,14 @@ func (u *User) GetUsername() string {
 
 func (u *User) GetEmail() string {
 	return u.email
+}
+
+func (u *User) GetAvatar() string {
+	return u.avatar
+}
+
+func (u *User) GetDescription() string {
+	return u.description
 }
 
 func (u *User) GetPassword() string {
@@ -104,8 +124,11 @@ func (u *User) FindByUsername(username string) (*User, error) {
 func (u *User) ToDTO() *dto.UserDTO {
 	return &dto.UserDTO{
 		ID:           u.id,
+		Name:         u.name,
+		Avatar:       u.avatar,
 		Username:     u.username,
 		Email:        u.email,
+		Description:  u.description,
 		SessionToken: u.sessionToken,
 	}
 }

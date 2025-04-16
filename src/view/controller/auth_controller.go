@@ -67,11 +67,8 @@ func Register(c *gin.Context) {
 		return
 	}
 
-	name := req.Username
-	username := "@" + req.Username
-
 	register := usecase.NewRegistrarUsuarioUseCase(di.GetContainer().GetUserRepository())
-	response := register.Execute(username, name, req.Email, req.Password)
+	response := register.Execute(req.Name, req.Email, req.Password)
 
 	c.JSON(response.Code, response)
 
