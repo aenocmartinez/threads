@@ -3,9 +3,8 @@ package di
 import (
 	"database/sql"
 	"sync"
-
 	"threads/src/domain"
-	"threads/src/infraestructure/dao"
+	"threads/src/infraestructure/dao/mysql"
 	"threads/src/infraestructure/database"
 )
 
@@ -25,8 +24,8 @@ func GetContainer() *Container {
 		db := database.GetDB()
 		instance = &Container{
 			db:             db,
-			userRepo:       dao.NewUserDAO(db),
-			comentarioRepo: dao.NewComentarioDAO(db),
+			userRepo:       mysql.NewUserDAO(db),
+			comentarioRepo: mysql.NewComentarioDAO(db),
 		}
 	})
 	return instance
