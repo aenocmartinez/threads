@@ -21,6 +21,6 @@ if [ "$(docker images -q $image_name:$tag)" ]; then
     docker rmi $image_name:$tag
 fi
 docker build --no-cache -t $image_name:$tag -f Dockerfile.prod . --platform linux/x86_64
-docker tag $image_name:$tag aenocmartinez/$image_name:$tag
-docker push aenocmartinez/$image_name:$tag
-docker rmi aenocmartinez/$image_name:$tag
+docker tag $image_name:$tag pulzo/$image_name:$tag
+docker push pulzo/$image_name:$tag
+docker rmi pulzo/$image_name:$tag

@@ -95,9 +95,6 @@ func (u *UserDAO) FindUserLogin(login string) (*domain.User, error) {
 			COALESCE(session_token, '')
 		FROM users WHERE username = ? OR email = ? OR phone = ?`
 
-	fmt.Println(query)
-	fmt.Println(login)
-
 	row := u.db.QueryRow(query, login, login, login)
 
 	var id int64
