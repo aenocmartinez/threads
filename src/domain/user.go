@@ -121,11 +121,11 @@ func (u *User) FindByUsername(username string) (*User, error) {
 	return u.repository.FindByUsername(username)
 }
 
-func (u *User) ObtenerUsuariosQueMeSiguen() *[]Seguidor {
+func (u *User) ObtenerUsuariosQueMeSiguen() []Seguidor {
 	return u.repository.ObtenerUsuariosQueMeSiguen(u.id)
 }
 
-func (u *User) ObtenerUsuariosALosQueSigo() *[]Seguidor {
+func (u *User) ObtenerUsuariosALosQueSigo() []Seguidor {
 	return u.repository.ObtenerUsuariosQueSigo(u.id)
 }
 
@@ -138,7 +138,7 @@ func (u *User) DejarDeSeguirUsuario(usuario_a_no_seguir *User) bool {
 }
 
 func (u *User) TotalDeSeguidores() int {
-	return len(*u.ObtenerUsuariosQueMeSiguen())
+	return len(u.ObtenerUsuariosQueMeSiguen())
 }
 
 func (u *User) ToDTO() *dto.UserDTO {

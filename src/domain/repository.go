@@ -14,8 +14,8 @@ type UserRepository interface {
 	Save(user *User) error
 	Update(user *User) error
 	Delete(id int64) error
-	ObtenerUsuariosQueMeSiguen(userID int64) *[]Seguidor
-	ObtenerUsuariosQueSigo(userID int64) *[]Seguidor
+	ObtenerUsuariosQueMeSiguen(userID int64) []Seguidor
+	ObtenerUsuariosQueSigo(userID int64) []Seguidor
 	SeguirUsuario(usuarioSeguidorID, usuarioSeguidoID int64) bool
 	DejarDeSeguirUsuario(usuarioSeguidorID, usuarioSeguidoID int64) bool
 }

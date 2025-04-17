@@ -76,16 +76,20 @@ func (c *Comentario) Existe() bool {
 }
 
 func (c *Comentario) ToDTO() *dto.ComentarioDTO {
-	var comentarioPadre *dto.ComentarioDTO
-	if c.comentarioPadre != nil {
-		comentarioPadre = c.comentarioPadre.ToDTO()
-	}
+	// var comentarioPadre *dto.ComentarioDTO
+	// if c.comentarioPadre != nil {
+	// 	comentarioPadre = c.comentarioPadre.ToDTO()
+	// }
 
 	return &dto.ComentarioDTO{
-		ID:              c.GetID(),
-		Contenido:       c.GetContenido(),
-		Usuario:         c.user.ToDTO(),
-		ComentarioPadre: comentarioPadre,
-		CreatedAt:       c.GetCreatedAt(),
+		ID:        c.GetID(),
+		Contenido: c.GetContenido(),
+		Usuario: &dto.UserDTO{
+			ID:       c.user.GetID(),
+			Name:     c.user.GetName(),
+			Username: c.user.GetUsername(),
+		},
+		// ComentarioPadreID: &comentarioPadre.ID,
+		CreatedAt: c.GetCreatedAt(),
 	}
 }

@@ -21,8 +21,8 @@ func (uc *ObtenerSeguidosUseCase) Execute(usuarioID int64) *dto.ResponseThreads 
 		return dto.NewResponseThreads(200, "Sin usuarios seguidos", []dto.UserDTO{})
 	}
 
-	var resultado []dto.UserDTO
-	for _, s := range *seguidos {
+	resultado := []dto.UserDTO{}
+	for _, s := range seguidos {
 		if s.GetUserSeguido() != nil {
 			resultado = append(resultado, *s.GetUserSeguido().ToDTO())
 		}

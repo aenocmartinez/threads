@@ -304,10 +304,15 @@ func (u *UserDAO) ExistsUsername(username string) (bool, error) {
 	return true, nil
 }
 
-func (u *UserDAO) ObtenerUsuariosQueMeSiguen(userID int64) *[]domain.Seguidor {
+func (u *UserDAO) ObtenerUsuariosQueMeSiguen(userID int64) []domain.Seguidor {
 	query := `
 		SELECT 
-			us.id, us.name, us.username, us.email, us.phone, us.password, us.avatar, us.description, us.session_token,
+			us.id, us.name, us.username, us.email, 
+			COALESCE(us.phone, ''),
+			us.password,
+			COALESCE(us.avatar, ''),
+			COALESCE(us.description, ''),
+			COALESCE(us.session_token, ''),
 			s.fecha_sigue
 		FROM seguidores s
 		JOIN users us ON us.id = s.usuario_seguidor_id
@@ -316,11 +321,12 @@ func (u *UserDAO) ObtenerUsuariosQueMeSiguen(userID int64) *[]domain.Seguidor {
 
 	rows, err := u.db.Query(query, userID)
 	if err != nil {
+		fmt.Println(err)
 		return nil
 	}
 	defer rows.Close()
 
-	var seguidores []domain.Seguidor
+	seguidores := []domain.Seguidor{}
 
 	for rows.Next() {
 		var (
@@ -338,6 +344,7 @@ func (u *UserDAO) ObtenerUsuariosQueMeSiguen(userID int64) *[]domain.Seguidor {
 
 		err := rows.Scan(&id, &name, &username, &email, &phone, &password, &avatar, &description, &sessionToken, &fechaSigue)
 		if err != nil {
+			fmt.Println(err)
 			continue
 		}
 
@@ -352,6 +359,8 @@ func (u *UserDAO) ObtenerUsuariosQueMeSiguen(userID int64) *[]domain.Seguidor {
 		user.SetDescription(description)
 		user.SetSessionToken(sessionToken)
 
+		fmt.Println(user)
+
 		seguidor := domain.NewSeguidor()
 		seguidor.SetUserSeguidor(user)
 		seguidor.SetFechaSigue(fechaSigue)
@@ -359,13 +368,21 @@ func (u *UserDAO) ObtenerUsuariosQueMeSiguen(userID int64) *[]domain.Seguidor {
 		seguidores = append(seguidores, *seguidor)
 	}
 
-	return &seguidores
+	return seguidores
 }
 
-func (u *UserDAO) ObtenerUsuariosQueSigo(userID int64) *[]domain.Seguidor {
+func (u *UserDAO) ObtenerUsuariosQueSigo(userID int64) []domain.Seguidor {
 	query := `
 		SELECT 
-			us.id, us.name, us.username, us.email, us.phone, us.password, us.avatar, us.description, us.session_token,
+			us.id,
+			us.name,
+			us.username,
+			us.email,
+			COALESCE(us.phone, ''),
+			us.password,
+			COALESCE(us.avatar, ''),
+			COALESCE(us.description, ''),
+			COALESCE(us.session_token, ''),
 			s.fecha_sigue
 		FROM seguidores s
 		JOIN users us ON us.id = s.usuario_seguido_id
@@ -378,7 +395,7 @@ func (u *UserDAO) ObtenerUsuariosQueSigo(userID int64) *[]domain.Seguidor {
 	}
 	defer rows.Close()
 
-	var seguidos []domain.Seguidor
+	seguidos := []domain.Seguidor{}
 
 	for rows.Next() {
 		var (
@@ -417,7 +434,7 @@ func (u *UserDAO) ObtenerUsuariosQueSigo(userID int64) *[]domain.Seguidor {
 		seguidos = append(seguidos, *seguidor)
 	}
 
-	return &seguidos
+	return seguidos
 }
 
 func (u *UserDAO) SeguirUsuario(usuarioSeguidorID, usuarioSeguidoID int64) bool {

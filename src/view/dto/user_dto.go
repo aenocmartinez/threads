@@ -8,5 +8,5 @@ type UserDTO struct {
 	Avatar          string `json:"avatar,omitempty"`
 	Description     string `json:"description,omitempty"`
 	SessionToken    string `json:"token,omitempty"`
-	TotalSeguidores int    `json:"total_seguirdores,omitempty"`
+	TotalSeguidores int    `json:"total_seguidores,omitempty"`
 }
