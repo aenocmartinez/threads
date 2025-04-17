@@ -138,7 +138,7 @@ func (u *User) DejarDeSeguirUsuario(usuario_a_no_seguir *User) bool {
 }
 
 func (u *User) TotalDeSeguidores() int {
-	return len(u.ObtenerUsuariosQueMeSiguen())
+	return u.repository.TotalNumeroDeSeguidores(u.id)
 }
 
 func (u *User) ToDTO() *dto.UserDTO {

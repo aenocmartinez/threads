@@ -457,3 +457,20 @@ func (u *UserDAO) DejarDeSeguirUsuario(usuarioSeguidorID, usuarioSeguidoID int64
 	_, err := u.db.Exec(query, usuarioSeguidorID, usuarioSeguidoID)
 	return err == nil
 }
+
+func (u *UserDAO) TotalNumeroDeSeguidores(usuarioID int64) int {
+	query := `
+		SELECT COUNT(*)
+		FROM seguidores
+		WHERE usuario_seguido_id = $1
+	`
+
+	var total int
+	err := u.db.QueryRow(query, usuarioID).Scan(&total)
+	if err != nil {
+		fmt.Println("error contando seguidores:", err)
+		return 0
+	}
+
+	return total
+}

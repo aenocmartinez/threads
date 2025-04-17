@@ -113,3 +113,16 @@ func SubirAvatar(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{"path": path})
 }
+
+func ConsultarUsuario(c *gin.Context) {
+	idStr := c.Param("id")
+	id, err := strconv.ParseInt(idStr, 10, 64)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "ID de usuario inválido"})
+		return
+	}
+
+	useCase := usecase.NewConsultarDatosUsuarioUseCase(di.GetContainer().GetUserRepository())
+	response := useCase.Execute(id)
+	c.JSON(http.StatusOK, response)
+}

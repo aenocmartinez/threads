@@ -18,6 +18,7 @@ type UserRepository interface {
 	ObtenerUsuariosQueSigo(userID int64) []Seguidor
 	SeguirUsuario(usuarioSeguidorID, usuarioSeguidoID int64) bool
 	DejarDeSeguirUsuario(usuarioSeguidorID, usuarioSeguidoID int64) bool
+	TotalNumeroDeSeguidores(usuarioID int64) int
 }
 
 type ComentarioRepository interface {
