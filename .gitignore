@@ -1,0 +1,18 @@
+# Ignorar carpeta de uploads
+uploads/
+
+# Archivos de configuración sensibles
+.env
+.env.local
+
+# Logs
+*.log
+
+# Binarios de compilación
+*.exe
+*.out
+*.bin
+
+# Archivos temporales
+tmp/
+.cache/
