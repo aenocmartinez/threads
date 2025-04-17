@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 	"threads/src/domain"
+	"time"
 )
 
 type UserDAO struct {
@@ -301,4 +302,141 @@ func (u *UserDAO) ExistsUsername(username string) (bool, error) {
 		return false, fmt.Errorf("error verificando existencia de username: %w", err)
 	}
 	return true, nil
+}
+
+func (u *UserDAO) ObtenerUsuariosQueMeSiguen(userID int64) *[]domain.Seguidor {
+	query := `
+		SELECT 
+			us.id, us.name, us.username, us.email, us.phone, us.password, us.avatar, us.description, us.session_token,
+			s.fecha_sigue
+		FROM seguidores s
+		JOIN users us ON us.id = s.usuario_seguidor_id
+		WHERE s.usuario_seguido_id = $1
+	`
+
+	rows, err := u.db.Query(query, userID)
+	if err != nil {
+		return nil
+	}
+	defer rows.Close()
+
+	var seguidores []domain.Seguidor
+
+	for rows.Next() {
+		var (
+			id           int64
+			name         string
+			username     string
+			email        string
+			phone        string
+			password     string
+			avatar       string
+			description  string
+			sessionToken string
+			fechaSigue   time.Time
+		)
+
+		err := rows.Scan(&id, &name, &username, &email, &phone, &password, &avatar, &description, &sessionToken, &fechaSigue)
+		if err != nil {
+			continue
+		}
+
+		user := domain.NewUser(u)
+		user.SetID(id)
+		user.SetName(name)
+		user.SetUsername(username)
+		user.SetEmail(email)
+		user.SetPhone(phone)
+		user.SetPassword(password)
+		user.SetAvatar(avatar)
+		user.SetDescription(description)
+		user.SetSessionToken(sessionToken)
+
+		seguidor := domain.NewSeguidor()
+		seguidor.SetUserSeguidor(user)
+		seguidor.SetFechaSigue(fechaSigue)
+
+		seguidores = append(seguidores, *seguidor)
+	}
+
+	return &seguidores
+}
+
+func (u *UserDAO) ObtenerUsuariosQueSigo(userID int64) *[]domain.Seguidor {
+	query := `
+		SELECT 
+			us.id, us.name, us.username, us.email, us.phone, us.password, us.avatar, us.description, us.session_token,
+			s.fecha_sigue
+		FROM seguidores s
+		JOIN users us ON us.id = s.usuario_seguido_id
+		WHERE s.usuario_seguidor_id = $1
+	`
+
+	rows, err := u.db.Query(query, userID)
+	if err != nil {
+		return nil
+	}
+	defer rows.Close()
+
+	var seguidos []domain.Seguidor
+
+	for rows.Next() {
+		var (
+			id           int64
+			name         string
+			username     string
+			email        string
+			phone        string
+			password     string
+			avatar       string
+			description  string
+			sessionToken string
+			fechaSigue   time.Time
+		)
+
+		err := rows.Scan(&id, &name, &username, &email, &phone, &password, &avatar, &description, &sessionToken, &fechaSigue)
+		if err != nil {
+			continue
+		}
+
+		user := domain.NewUser(u)
+		user.SetID(id)
+		user.SetName(name)
+		user.SetUsername(username)
+		user.SetEmail(email)
+		user.SetPhone(phone)
+		user.SetPassword(password)
+		user.SetAvatar(avatar)
+		user.SetDescription(description)
+		user.SetSessionToken(sessionToken)
+
+		seguidor := domain.NewSeguidor()
+		seguidor.SetUserSeguido(user)
+		seguidor.SetFechaSigue(fechaSigue)
+
+		seguidos = append(seguidos, *seguidor)
+	}
+
+	return &seguidos
+}
+
+func (u *UserDAO) SeguirUsuario(usuarioSeguidorID, usuarioSeguidoID int64) bool {
+	query := `
+		INSERT INTO seguidores (usuario_seguidor_id, usuario_seguido_id)
+		VALUES ($1, $2)
+		ON CONFLICT DO NOTHING
+	`
+
+	_, err := u.db.Exec(query, usuarioSeguidorID, usuarioSeguidoID)
+	return err == nil
+}
+
+func (u *UserDAO) DejarDeSeguirUsuario(usuarioSeguidorID, usuarioSeguidoID int64) bool {
+	query := `
+		DELETE FROM seguidores
+		WHERE usuario_seguidor_id = $1 AND usuario_seguido_id = $2
+	`
+
+	_, err := u.db.Exec(query, usuarioSeguidorID, usuarioSeguidoID)
+	return err == nil
 }

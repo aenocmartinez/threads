@@ -121,14 +121,35 @@ func (u *User) FindByUsername(username string) (*User, error) {
 	return u.repository.FindByUsername(username)
 }
 
+func (u *User) ObtenerUsuariosQueMeSiguen() *[]Seguidor {
+	return u.repository.ObtenerUsuariosQueMeSiguen(u.id)
+}
+
+func (u *User) ObtenerUsuariosALosQueSigo() *[]Seguidor {
+	return u.repository.ObtenerUsuariosQueSigo(u.id)
+}
+
+func (u *User) SeguirUsuario(usuarioASeguir *User) bool {
+	return u.repository.SeguirUsuario(u.id, usuarioASeguir.GetID())
+}
+
+func (u *User) DejarDeSeguirUsuario(usuario_a_no_seguir *User) bool {
+	return u.repository.DejarDeSeguirUsuario(u.id, usuario_a_no_seguir.GetID())
+}
+
+func (u *User) TotalDeSeguidores() int {
+	return len(*u.ObtenerUsuariosQueMeSiguen())
+}
+
 func (u *User) ToDTO() *dto.UserDTO {
 	return &dto.UserDTO{
-		ID:           u.id,
-		Name:         u.name,
-		Avatar:       u.avatar,
-		Username:     u.username,
-		Email:        u.email,
-		Description:  u.description,
-		SessionToken: u.sessionToken,
+		ID:              u.id,
+		Name:            u.name,
+		Avatar:          u.avatar,
+		Username:        u.username,
+		Email:           u.email,
+		Description:     u.description,
+		SessionToken:    u.sessionToken,
+		TotalSeguidores: u.TotalDeSeguidores(),
 	}
 }

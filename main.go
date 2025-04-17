@@ -1,8 +1,7 @@
 package main
 
 import (
-	"threads/src/infraestructure/middleware"
-	"threads/src/view/controller"
+	"threads/src/view/routes"
 	"time"
 
 	"github.com/gin-contrib/cors"
@@ -24,17 +23,7 @@ func main() {
 		MaxAge:           12 * time.Hour,
 	}))
 
-	r.POST("/login", controller.Login)
-	r.POST("/register", controller.Register)
-	r.GET("/check-db", controller.CheckDBConnection)
+	routes.RegisterRoutes(r)
 
-	protected := r.Group("/api")
-	protected.Use(middleware.AuthMiddleware())
-	{
-		protected.POST("/logout", controller.Logout)
-		// protected.GET("/test", controller.TestEndpoint)
-	}
-
-	// Puerto de ejecución
 	r.Run(":8590")
 }

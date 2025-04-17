@@ -7,7 +7,7 @@ import (
 	"threads/src/infraestructure/middleware"
 	"threads/src/usecase/auth"
 	usecase "threads/src/usecase/usuarios"
-	formrequest "threads/src/view/form-request"
+	"threads/src/view/formrequest"
 
 	"github.com/gin-gonic/gin"
 )
