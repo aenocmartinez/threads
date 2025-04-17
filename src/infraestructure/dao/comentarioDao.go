@@ -271,3 +271,30 @@ func (c *ComentarioDAO) ObtenerComentariosRecientesDesde(fechaUltimo time.Time) 
 
 	return conversaciones
 }
+
+func (c *ComentarioDAO) DarMeGustaAComentario(usuarioID, comentarioID int64) bool {
+	query := `
+		INSERT INTO me_gusta_comentario (usuario_id, comentario_id)
+		VALUES ($1, $2)
+		ON CONFLICT DO NOTHING
+	`
+	_, err := c.db.Exec(query, usuarioID, comentarioID)
+	if err != nil {
+		fmt.Println("error insertando me gusta:", err)
+		return false
+	}
+	return true
+}
+
+func (c *ComentarioDAO) QuitarMeGustaAComentario(usuarioID, comentarioID int64) bool {
+	query := `
+		DELETE FROM me_gusta_comentario
+		WHERE usuario_id = $1 AND comentario_id = $2
+	`
+	_, err := c.db.Exec(query, usuarioID, comentarioID)
+	if err != nil {
+		fmt.Println("error quitando me gusta:", err)
+		return false
+	}
+	return true
+}

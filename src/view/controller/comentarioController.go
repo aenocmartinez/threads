@@ -125,3 +125,49 @@ func ObtenerComentariosRecientesDesde(c *gin.Context) {
 	response := useCase.Execute(fecha)
 	c.JSON(http.StatusOK, response)
 }
+
+func DarMeGustaComentario(c *gin.Context) {
+	comentarioIDStr := c.Param("id")
+	comentarioID, err := strconv.ParseInt(comentarioIDStr, 10, 64)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "ID de comentario inválido"})
+		return
+	}
+
+	var request comentario.MeGustaComentarioRequest
+	if err := c.ShouldBindJSON(&request); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Datos inválidos"})
+		return
+	}
+
+	useCase := usecase.NewDarMeGustaComentarioUseCase(
+		di.GetContainer().GetComentarioRepository(),
+		di.GetContainer().GetUserRepository(),
+	)
+
+	response := useCase.Execute(request.UsuarioID, comentarioID)
+	c.JSON(http.StatusOK, response)
+}
+
+func QuitarMeGustaComentario(c *gin.Context) {
+	comentarioIDStr := c.Param("id")
+	comentarioID, err := strconv.ParseInt(comentarioIDStr, 10, 64)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "ID de comentario inválido"})
+		return
+	}
+
+	var request comentario.MeGustaComentarioRequest
+	if err := c.ShouldBindJSON(&request); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Datos inválidos"})
+		return
+	}
+
+	useCase := usecase.NewQuitarMeGustaComentarioUseCase(
+		di.GetContainer().GetComentarioRepository(),
+		di.GetContainer().GetUserRepository(),
+	)
+
+	response := useCase.Execute(request.UsuarioID, comentarioID)
+	c.JSON(http.StatusOK, response)
+}
