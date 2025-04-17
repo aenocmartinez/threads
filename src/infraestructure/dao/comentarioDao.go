@@ -307,3 +307,57 @@ func (c *ComentarioDAO) QuitarMeGustaAComentario(usuarioID, comentarioID int64) 
 	}
 	return true
 }
+
+func (c *ComentarioDAO) ObtenerUsuariosQueDieronMeGusta(comentarioID int64) []domain.User {
+	query := `
+		SELECT 
+			u.id, u.name, u.username, u.email, COALESCE(u.phone, ''), u.password, COALESCE(u.avatar, ''), COALESCE(u.description, ''), COALESCE(u.session_token, '')		
+		FROM me_gusta_comentario mg
+		JOIN users u ON u.id = mg.usuario_id
+		WHERE mg.comentario_id = $1
+	`
+
+	rows, err := c.db.Query(query, comentarioID)
+	if err != nil {
+		fmt.Println("error obteniendo usuarios que dieron me gusta:", err)
+		return nil
+	}
+	defer rows.Close()
+
+	usuarios := []domain.User{}
+
+	for rows.Next() {
+		var (
+			id           int64
+			name         string
+			username     string
+			email        string
+			phone        string
+			password     string
+			avatar       string
+			description  string
+			sessionToken string
+		)
+
+		err := rows.Scan(&id, &name, &username, &email, &phone, &password, &avatar, &description, &sessionToken)
+		if err != nil {
+			fmt.Println("error escaneando usuario:", err)
+			continue
+		}
+
+		user := domain.NewUser(NewUserDAO(c.db))
+		user.SetID(id)
+		user.SetName(name)
+		user.SetUsername(username)
+		user.SetEmail(email)
+		user.SetPhone(phone)
+		user.SetPassword(password)
+		user.SetAvatar(avatar)
+		user.SetDescription(description)
+		user.SetSessionToken(sessionToken)
+
+		usuarios = append(usuarios, *user)
+	}
+
+	return usuarios
+}

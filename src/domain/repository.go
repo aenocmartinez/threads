@@ -31,4 +31,5 @@ type ComentarioRepository interface {
 	ObtenerComentariosRecientesDesde(fechaUltimo time.Time) []dto.ComentarioConRespuestasDTO
 	DarMeGustaAComentario(usuarioID, comentarioID int64) bool
 	QuitarMeGustaAComentario(usuarioID, comentarioID int64) bool
+	ObtenerUsuariosQueDieronMeGusta(comentarioID int64) []User
 }

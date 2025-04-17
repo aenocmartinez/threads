@@ -30,6 +30,7 @@ func RegisterRoutes(r *gin.Engine) {
 		protected.POST("/comentarios/responder", controller.ResponderAComentario)
 		protected.POST("/comentarios/:id/like", controller.DarMeGustaComentario)
 		protected.DELETE("/comentarios/:id/like", controller.QuitarMeGustaComentario)
+		protected.GET("/comentarios/:id/likes", controller.ObtenerUsuariosQueDieronMeGusta)
 
 		// Usuarios
 		protected.POST("/usuarios/seguir", controller.SeguirUsuario)

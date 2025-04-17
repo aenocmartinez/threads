@@ -171,3 +171,19 @@ func QuitarMeGustaComentario(c *gin.Context) {
 	response := useCase.Execute(request.UsuarioID, comentarioID)
 	c.JSON(http.StatusOK, response)
 }
+
+func ObtenerUsuariosQueDieronMeGusta(c *gin.Context) {
+	comentarioIDStr := c.Param("id")
+	comentarioID, err := strconv.ParseInt(comentarioIDStr, 10, 64)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "ID inválido"})
+		return
+	}
+
+	useCase := usecase.NewObtenerUsuariosQueDieronMeGustaUseCase(
+		di.GetContainer().GetComentarioRepository(),
+	)
+
+	response := useCase.Execute(comentarioID)
+	c.JSON(http.StatusOK, response)
+}
