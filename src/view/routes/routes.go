@@ -37,5 +37,8 @@ func RegisterRoutes(r *gin.Engine) {
 		protected.POST("/usuarios/dejar-de-seguir", controller.DejarDeSeguirUsuario)
 		protected.GET("/usuarios/:id/seguidores", controller.ObtenerSeguidores)
 		protected.GET("/usuarios/:id/seguidos", controller.ObtenerSeguidos)
+		protected.PUT("/usuarios/perfil", controller.EditarPerfil)
+		protected.POST("/usuarios/avatar", controller.SubirAvatar)
+
 	}
 }
