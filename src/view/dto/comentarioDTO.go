@@ -10,4 +10,5 @@ type ComentarioDTO struct {
 	ComentarioPadreID *int64         `json:"comentario_padre_id,omitempty"`
 	CreatedAt         time.Time      `json:"fecha_creacion,omitempty"`
 	UpdatedAt         time.Time      `json:"fecha_actualizacion,omitempty"`
+	MeGustaTotal      int            `json:"me_gusta_total"`
 }

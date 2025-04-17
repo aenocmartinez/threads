@@ -12,6 +12,7 @@ type Comentario struct {
 	comentarioPadre      *Comentario
 	createdAt            time.Time
 	updatedAt            time.Time
+	meGustaTotal         int
 	userRepository       UserRepository
 	comentarioRepository ComentarioRepository
 }
@@ -71,6 +72,14 @@ func (c *Comentario) GetUpdatedAt() time.Time {
 	return c.updatedAt
 }
 
+func (c *Comentario) SetMeGustaTotal(total int) {
+	c.meGustaTotal = total
+}
+
+func (c *Comentario) GetMeGustaTotal() int {
+	return c.meGustaTotal
+}
+
 func (c *Comentario) Existe() bool {
 	return c.id > 0
 }
@@ -90,6 +99,7 @@ func (c *Comentario) ToDTO() *dto.ComentarioDTO {
 			Username: c.user.GetUsername(),
 		},
 		// ComentarioPadreID: &comentarioPadre.ID,
-		CreatedAt: c.GetCreatedAt(),
+		CreatedAt:    c.GetCreatedAt(),
+		MeGustaTotal: c.meGustaTotal,
 	}
 }

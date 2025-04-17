@@ -120,7 +120,7 @@ func (c *ComentarioDAO) ObtenerComentario(id int64) *domain.Comentario {
 
 	err := row.Scan(&usuarioID, &contenido, &comentarioPadreID, &createdAt, &updatedAt)
 	if err == sql.ErrNoRows {
-		return domain.NewComentario(NewUserDAO(c.db), c)
+		return domain.NewComentario(NewUserDAO(c.db), c) // comentario vacío
 	}
 	if err != nil {
 		fmt.Println("error consultando comentario:", err)
@@ -131,6 +131,7 @@ func (c *ComentarioDAO) ObtenerComentario(id int64) *domain.Comentario {
 	comentario.SetID(id)
 	comentario.SetContenido(contenido)
 	comentario.SetCreatedAt(createdAt)
+
 	if updatedAt != nil {
 		comentario.SetUpdatedAt(*updatedAt)
 	}
@@ -146,6 +147,14 @@ func (c *ComentarioDAO) ObtenerComentario(id int64) *domain.Comentario {
 			comentario.SetComentarioPadre(padre)
 		}
 	}
+
+	var totalLikes int
+	err = c.db.QueryRow(`SELECT COUNT(*) FROM me_gusta_comentario WHERE comentario_id = $1`, id).Scan(&totalLikes)
+	if err != nil {
+		fmt.Println("error obteniendo total de me gusta:", err)
+		totalLikes = 0
+	}
+	comentario.SetMeGustaTotal(totalLikes)
 
 	return comentario
 }
