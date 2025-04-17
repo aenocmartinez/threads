@@ -31,8 +31,8 @@ func (uc *EditarPerfilUseCase) Execute(input dto.EditarPerfilDTO) *dto.ResponseT
 	}
 
 	user.SetName(input.Name)
-	user.SetUsername(input.Username)
-	user.SetEmail(input.Email)
+	// user.SetUsername(input.Username)
+	// user.SetEmail(input.Email)
 	user.SetPhone(input.Phone)
 	user.SetAvatar(input.Avatar)
 	user.SetDescription(input.Description)
