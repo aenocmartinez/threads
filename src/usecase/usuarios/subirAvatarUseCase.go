@@ -17,7 +17,7 @@ func NewSubirAvatarUseCase() *SubirAvatarUseCase {
 }
 
 func (uc *SubirAvatarUseCase) Execute(fileHeader *multipart.FileHeader) (string, error) {
-	const maxSize = 5 * 1024 * 1024 // 5 MB
+	const maxSize = 1 * 1024 * 1024
 
 	if fileHeader.Size > int64(maxSize) {
 		return "", fmt.Errorf("el archivo excede el tamaño máximo permitido de 2.5 MB")
