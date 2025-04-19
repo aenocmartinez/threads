@@ -26,9 +26,6 @@ func GetDB() *sql.DB {
 			os.Getenv("DB_NAME"),
 		)
 
-		fmt.Println("os.Getenv(DB_PASSWORD): ", os.Getenv("DB_PASSWORD"))
-		fmt.Println(dsn)
-
 		var err error
 		db, err = sql.Open("mysql", dsn)
 		if err != nil {

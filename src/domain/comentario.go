@@ -97,6 +97,7 @@ func (c *Comentario) ToDTO() *dto.ComentarioDTO {
 			ID:       c.user.GetID(),
 			Name:     c.user.GetName(),
 			Username: c.user.GetUsername(),
+			Avatar:   c.user.GetAvatar(),
 		},
 		// ComentarioPadreID: &comentarioPadre.ID,
 		CreatedAt:    c.GetCreatedAt(),
