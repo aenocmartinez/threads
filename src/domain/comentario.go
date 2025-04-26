@@ -104,3 +104,35 @@ func (c *Comentario) ToDTO() *dto.ComentarioDTO {
 		MeGustaTotal: c.meGustaTotal,
 	}
 }
+
+func (c *Comentario) MiComentarioToDTO() *dto.ComentarioDTO {
+	var comentarioPadreDTO *dto.ComentarioDTO
+	if c.comentarioPadre != nil {
+		comentarioPadreDTO = &dto.ComentarioDTO{
+			ID:        c.comentarioPadre.GetID(),
+			Contenido: c.comentarioPadre.GetContenido(),
+			Usuario: &dto.UserDTO{
+				ID:       c.comentarioPadre.GetUser().GetID(),
+				Name:     c.comentarioPadre.GetUser().GetName(),
+				Username: c.comentarioPadre.GetUser().GetUsername(),
+				Avatar:   c.comentarioPadre.GetUser().GetAvatar(),
+			},
+			CreatedAt:    c.comentarioPadre.GetCreatedAt(),
+			MeGustaTotal: c.comentarioPadre.GetMeGustaTotal(),
+		}
+	}
+
+	return &dto.ComentarioDTO{
+		ID:        c.GetID(),
+		Contenido: c.GetContenido(),
+		Usuario: &dto.UserDTO{
+			ID:       c.user.GetID(),
+			Name:     c.user.GetName(),
+			Username: c.user.GetUsername(),
+			Avatar:   c.user.GetAvatar(),
+		},
+		ComentarioPadre: comentarioPadreDTO,
+		CreatedAt:       c.GetCreatedAt(),
+		MeGustaTotal:    c.meGustaTotal,
+	}
+}

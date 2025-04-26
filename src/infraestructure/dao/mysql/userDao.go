@@ -471,3 +471,76 @@ func (u *UserDAO) TotalNumeroDeSeguidores(usuarioID int64) int {
 
 	return total
 }
+
+func (u *UserDAO) ObtenerComentariosRecientesUsuario(usuarioID int64) []domain.Comentario {
+	query := `
+		SELECT id, usuario_id, contenido, comentario_padre_id, created_at, updated_at
+		FROM comentarios
+		WHERE usuario_id = ?
+		ORDER BY created_at DESC
+		LIMIT 100`
+
+	rows, err := u.db.Query(query, usuarioID)
+	if err != nil {
+		fmt.Println("error obteniendo comentarios recientes:", err)
+		return []domain.Comentario{}
+	}
+	defer rows.Close()
+
+	var comentarios []domain.Comentario
+
+	// Instanciar DAO una sola vez fuera del for
+	userDao := NewUserDAO(u.db)
+	comentarioDao := NewComentarioDAO(u.db)
+
+	for rows.Next() {
+		var (
+			id                int64
+			userID            int64
+			contenido         string
+			comentarioPadreID *int64
+			createdAt         sql.NullTime
+			updatedAt         sql.NullTime
+		)
+
+		err := rows.Scan(&id, &userID, &contenido, &comentarioPadreID, &createdAt, &updatedAt)
+		if err != nil {
+			fmt.Println("error escaneando comentario:", err)
+			continue
+		}
+
+		comentario := domain.NewComentario(userDao, comentarioDao)
+		comentario.SetID(id)
+		comentario.SetContenido(contenido)
+
+		// Setear fechas si existen
+		if createdAt.Valid {
+			comentario.SetCreatedAt(createdAt.Time)
+		}
+		if updatedAt.Valid {
+			comentario.SetUpdatedAt(updatedAt.Time)
+		}
+
+		// Buscar y setear usuario
+		user, _ := userDao.FindByID(userID)
+		if user != nil && user.Exists() {
+			comentario.SetUser(user)
+		}
+
+		// Buscar y setear comentario padre si existe
+		if comentarioPadreID != nil {
+			comentarioPadre := comentarioDao.ObtenerComentario(*comentarioPadreID)
+			if comentarioPadre != nil && comentarioPadre.Existe() {
+				comentario.SetComentarioPadre(comentarioPadre)
+			}
+		}
+
+		comentarios = append(comentarios, *comentario)
+	}
+
+	if err := rows.Err(); err != nil {
+		fmt.Println("error finalizando filas de comentarios:", err)
+	}
+
+	return comentarios
+}

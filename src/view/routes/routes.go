@@ -40,5 +40,6 @@ func RegisterRoutes(r *gin.Engine) {
 		protected.PUT("/usuarios/perfil", controller.EditarPerfil)
 		protected.POST("/usuarios/avatar", controller.SubirAvatar)
 		protected.GET("/usuarios/:id", controller.ConsultarUsuario)
+		protected.GET("/usuarios/:id/comentarios", controller.ObtenerComentariosUsuario)
 	}
 }

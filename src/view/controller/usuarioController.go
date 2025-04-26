@@ -126,3 +126,16 @@ func ConsultarUsuario(c *gin.Context) {
 	response := useCase.Execute(id)
 	c.JSON(http.StatusOK, response)
 }
+
+func ObtenerComentariosUsuario(c *gin.Context) {
+	idStr := c.Param("id")
+	id, err := strconv.ParseInt(idStr, 10, 64)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "ID de usuario inválido"})
+		return
+	}
+
+	useCase := usecase.NewObtenerComentariosUsuarioUseCase(di.GetContainer().GetUserRepository())
+	response := useCase.Execute(id)
+	c.JSON(http.StatusOK, response)
+}
